@@ -1,0 +1,12 @@
+
+  // Leva as UTMs (e o sck) da LP para o checkout proprio: sem isso a origem da venda
+  // se perde no clique e a UTMify/Cakto nao atribuem a venda a campanha.
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    if (!params.toString()) return;
+    document.querySelectorAll("a[data-checkout]").forEach(function (a) {
+      var url = new URL(a.href);
+      params.forEach(function (value, key) { if (!url.searchParams.has(key)) url.searchParams.set(key, value); });
+      a.href = url.toString();
+    });
+  })();

@@ -1,0 +1,15 @@
+(function(){
+  try {
+    if (location.protocol !== 'file:') return;
+    var b = document.createElement('div');
+    b.textContent = 'Este clone precisa do servidor local incluido no pacote. Feche esta aba e de dois cliques em ABRIR-SITE.cmd.';
+    b.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:2147483647;background:#0a0d14;color:#eef1f7;font:13px/1.5 -apple-system,BlinkMacSystemFont,sans-serif;padding:10px 44px 10px 14px;box-shadow:0 -4px 20px rgba(0,0,0,.35)';
+    var x = document.createElement('button');
+    x.textContent = '\u2715';
+    x.setAttribute('aria-label','Fechar aviso');
+    x.style.cssText = 'position:absolute;right:8px;top:6px;background:transparent;border:0;color:#9aa4b6;font-size:15px;cursor:pointer;padding:4px 8px;line-height:1';
+    x.onclick = function(){ b.remove(); };
+    b.appendChild(x);
+    (document.body || document.documentElement).appendChild(b);
+  } catch (e) {}
+})();

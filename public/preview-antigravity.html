@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Protocolo Zero · Preview de Alteração de Código</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #07080a;
+    color: #adbac7;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 32px 16px;
+  }
+
+  .preview-wrapper {
+    width: 100%;
+    max-width: 680px;
+    background: #0d0f12;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 16px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04);
+    overflow: hidden;
+  }
+
+  /* IDE Top bar */
+  .window-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 20px;
+    background: #121419;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  }
+  .window-dots {
+    display: flex;
+    gap: 7px;
+  }
+  .window-dots span {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+  }
+  .dot--red { background: #ff5f56; }
+  .dot--yellow { background: #ffbd2e; }
+  .dot--green { background: #27c93f; }
+
+  .window-title {
+    font-size: 11.5px;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    color: #768390;
+    letter-spacing: 0.05em;
+  }
+
+  /* User prompt banner */
+  .prompt-box {
+    padding: 16px 20px;
+    background: rgba(168, 85, 247, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .prompt-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #a855f7, #6366f1);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .prompt-content {
+    flex: 1;
+  }
+  .prompt-label {
+    font-size: 11px;
+    color: #c084fc;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .prompt-text {
+    font-size: 14px;
+    color: #ffffff;
+    line-height: 1.45;
+    font-weight: 500;
+  }
+
+  /* Trajectory container */
+  .agent-trajectory {
+    padding: 20px 22px;
+    font-size: 13.5px;
+    line-height: 1.75;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .agent-step {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+    padding: 3px 0;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .agent-step.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .agent-step--header {
+    color: #e6edf3;
+    font-weight: 500;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 8px;
+  }
+  .agent-step--header .step-file {
+    color: #ffffff;
+    font-weight: 600;
+  }
+  .agent-step--header .step-caret {
+    color: #6e7681;
+    font-size: 11px;
+    margin-left: 3px;
+  }
+
+  .step-text { color: #adbac7; }
+  .step-cmd { color: #e6edf3; font-weight: 500; }
+  .step-shield {
+    display: inline-flex;
+    align-items: center;
+    color: #768390;
+    margin: 0 1px;
+  }
+  .step-shield svg {
+    width: 13.5px;
+    height: 13.5px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+  }
+  .step-chevron {
+    color: #545d68;
+    font-size: 13px;
+    line-height: 1;
+  }
+  .step-exit {
+    color: #4ade80;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .agent-step--thought {
+    color: #768390;
+    font-style: italic;
+    font-size: 12.5px;
+  }
+
+  /* Badges */
+  .badge-code {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 4px;
+    line-height: 1.3;
+  }
+  .badge-code--js {
+    background: rgba(245, 158, 11, 0.18);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+  }
+  .badge-code--tag {
+    background: rgba(249, 115, 22, 0.18);
+    color: #fb923c;
+    border: 1px solid rgba(249, 115, 22, 0.35);
+  }
+
+  .step-lines {
+    color: #768390;
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+  }
+
+  .diff-add-num {
+    color: #3fb950;
+    font-weight: 700;
+    font-family: ui-monospace, monospace;
+    font-size: 12.5px;
+    margin-left: 4px;
+  }
+  .diff-del-num {
+    color: #f85149;
+    font-weight: 700;
+    font-family: ui-monospace, monospace;
+    font-size: 12.5px;
+    margin-left: 2px;
+  }
+
+  /* Glowing Working text */
+  .agent-step--working {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.06);
+  }
+  .working-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .working-dot {
+    width: 7.5px;
+    height: 7.5px;
+    border-radius: 50%;
+    background: #3fb950;
+    box-shadow: 0 0 10px #3fb950, 0 0 22px rgba(63, 185, 80, 0.7);
+    animation: pulseWorking 1.3s ease-in-out infinite alternate;
+  }
+  .working-text {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    background: linear-gradient(90deg, #6e7681 0%, #adbac7 25%, #ffffff 50%, #adbac7 75%, #6e7681 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmerWave 2.2s linear infinite;
+  }
+
+  @keyframes shimmerWave {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  @keyframes pulseWorking {
+    from { transform: scale(0.8); opacity: 0.5; }
+    to { transform: scale(1.25); opacity: 1; }
+  }
+
+  /* Code alteration output (Diff Viewer) */
+  .code-output {
+    padding: 18px 22px;
+    background: #090a0d;
+  }
+  .output-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #768390;
+    font-family: ui-monospace, monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+  .output-status {
+    color: #4ade80;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+  }
+  .output-status::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 8px #4ade80;
+  }
+
+  .diff-box {
+    background: #0d0f12;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+  .diff-ctx {
+    color: #64748b;
+    font-style: italic;
+    display: block;
+  }
+  .diff-del {
+    color: #fca5a5;
+    background: rgba(239, 68, 68, 0.12);
+    border-left: 3px solid #ef4444;
+    padding: 2px 8px;
+    margin: 4px 0;
+    border-radius: 2px;
+    display: block;
+  }
+  .diff-add {
+    color: #86efac;
+    background: rgba(34, 197, 94, 0.12);
+    border-left: 3px solid #22c55e;
+    padding: 3px 8px;
+    margin: 4px 0;
+    border-radius: 2px;
+    display: block;
+    font-weight: 500;
+  }
+
+  .control-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .btn-replay {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(180deg, #a874ff, #7c3aed 55%, #6d28d9);
+    border: none;
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 30px rgba(124, 58, 237, 0.5);
+    transition: all 0.25s ease;
+  }
+  .btn-replay:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(124, 58, 237, 0.7);
+  }
+</style>
+</head>
+<body>
+
+<div class="preview-wrapper">
+  <!-- Window Header -->
+  <div class="window-top">
+    <div class="window-dots">
+      <span class="dot--red"></span>
+      <span class="dot--yellow"></span>
+      <span class="dot--green"></span>
+    </div>
+    <span class="window-title">Protocolo Zero Engine · Antigravity Kernel</span>
+    <span style="width: 44px"></span>
+  </div>
+
+  <!-- User Request (Topo de Funil: dor real do lead) -->
+  <div class="prompt-box">
+    <div class="prompt-avatar">VOCÊ</div>
+    <div class="prompt-content">
+      <div class="prompt-label">Comando de Desbloqueio</div>
+      <div class="prompt-text">"Ativar Protocolo Zero: clone a página do concorrente mais vendido, desmonte a oferta e gere uma copy agressiva pronta para vender hoje."</div>
+    </div>
+  </div>
+
+  <!-- Antigravity Agent Trajectory -->
+  <div class="agent-trajectory" id="trajectory">
+    <div class="agent-step agent-step--header">
+      <span class="step-text">Editing <span class="step-file">pagina_vendas.html</span></span>
+      <span class="step-caret">⌵</span>
+    </div>
+    <div class="agent-step">
+      <span class="step-text">Ran <span class="step-cmd">clonar_estrutura_concorrente.py</span></span>
+      <span class="step-shield"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+      <span class="step-chevron">›</span>
+    </div>
+    <div class="agent-step agent-step--thought">
+      <span class="step-text">Thought for 3s</span>
+      <span class="step-chevron">›</span>
+    </div>
+    <div class="agent-step">
+      <span class="step-text">Ran <span class="step-cmd">extrair_oferta_e_vsl</span></span>
+      <span class="step-shield"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+      <span class="step-exit">· Sucesso (200)</span>
+      <span class="step-chevron">›</span>
+    </div>
+    <div class="agent-step">
+      <span class="step-text">Created <span class="badge-code badge-code--js">JS</span> <span class="step-file">copy_agressiva_gerador.js</span></span>
+    </div>
+    <div class="agent-step">
+      <span class="step-text">Ran <span class="step-cmd">run copy_agressiva_gerador.js</span></span>
+      <span class="step-shield"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+      <span class="step-chevron">›</span>
+    </div>
+    <div class="agent-step agent-step--thought">
+      <span class="step-text">Thought for 2s</span>
+      <span class="step-chevron">›</span>
+    </div>
+    <div class="agent-step">
+      <span class="step-text">Analyzed <span class="badge-code badge-code--tag">&lt;/&gt;</span> <span class="step-file">oferta_concorrente.html</span> <span class="step-lines">#L1-340</span></span>
+    </div>
+    <div class="agent-step">
+      <span class="step-text">Edited <span class="badge-code badge-code--tag">&lt;/&gt;</span> <span class="step-file">sua_nova_pagina.html</span> <span class="diff-add-num">+240</span> <span class="diff-del-num">-15</span></span>
+    </div>
+    <div class="agent-step agent-step--working">
+      <span class="working-pill">
+        <span class="working-dot"></span>
+        <span class="working-text">Working</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- Live Code Diff Output -->
+  <div class="code-output">
+    <div class="output-header">
+      <span>Alteração de Código em Tempo Real</span>
+      <span class="output-status">Filtros Bypassados · 0.6s</span>
+    </div>
+    <div class="diff-box">
+      <span class="diff-ctx">&lt;!-- FUNIL DO CONCORRENTE DESMONTADO & REESCRITO COM PROTOCOLO ZERO --&gt;</span>
+      <span class="diff-del">- &lt;h1&gt;Aprenda a investir do zero com nosso curso básico&lt;/h1&gt;</span>
+      <span class="diff-add">+ &lt;h1 class="headline-ouro"&gt;Enquanto você dorme, eles lucram R$ 14.850 por dia com esse mesmo funil.&lt;/h1&gt;</span>
+      <span class="diff-add">+ &lt;p class="sub-agressiva"&gt;O segredo que os grandes players usam para faturar 6 dígitos em silêncio... sem mostrar o rosto.&lt;/p&gt;</span>
+      <span class="diff-add">+ &lt;a href="https://pay.cakto.com.br/zw6qwtg_1241501" class="btn-compra"&gt;QUERO MEU ACESSO AGORA ↗&lt;/a&gt;</span>
+      <span class="diff-ctx">&lt;!-- STATUS: ESTRUTURA CLONADA · COPY DE CONVERSÃO EXTREMA PRONTA --&gt;</span>
+    </div>
+  </div>
+</div>
+
+<div class="control-bar">
+  <button class="btn-replay" onclick="animateTrajectory()">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+    Repetir Simulação de Execução
+  </button>
+</div>
+
+<script>
+  function animateTrajectory() {
+    const steps = document.querySelectorAll('.agent-step');
+    steps.forEach(s => s.classList.remove('is-visible'));
+    steps.forEach((step, idx) => {
+      setTimeout(() => {
+        step.classList.add('is-visible');
+      }, idx * 110);
+    });
+  }
+  window.addEventListener('DOMContentLoaded', animateTrajectory);
+</script>
+
+</body>
+</html>

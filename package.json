@@ -1,0 +1,1 @@
+{"name":"protocolo-zero-academy","version":"1.0.0","private":true,"type":"module","scripts":{"dev":"vite --host 127.0.0.1","polish":"node scripts/polish.mjs","build":"vite build","preview":"vite preview --host 127.0.0.1"},"devDependencies":{"parse5":"^8.0.1","vite":"^7.1.12"}}

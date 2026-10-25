@@ -1,0 +1,161 @@
+
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  $('#year').textContent = new Date().getFullYear();
+
+  /* modules + testimonials marquees (duplicated for a seamless loop) */
+  const mods = [
+    ['M09','Do zero ao primeiro passo'],['M08','Configurando sua estrutura'],['M07','Low ticket na prática'],
+    ['M03','Criativos que vendem'],['M05','Estrutura de monetização'],['M06','Otimização de resultados'],
+    ['M04','Escala e crescimento'],['M02','Contingência e proteção da operação'],['M01','Quando e como pagar imposto']
+  ];
+  const modHTML = (hidden) => mods.map(([c, t], i) =>
+    `<figure class="mod" style="margin:0"${hidden ? ' aria-hidden="true"' : ''}><picture><source srcset="images/${c}.webp" type="image/webp"><img decoding="async" src="images/${c}.png" alt="${hidden ? '' : `Módulo ${i + 1}: ${t}`}" width="600" height="900" loading="lazy"></picture><figcaption>Módulo ${String(i + 1).padStart(2, '0')}</figcaption></figure>`).join('');
+  $('#modTrack').innerHTML = modHTML(false) + modHTML(true);
+
+  const depos = ['d01','d02','d03','d04','d05','d07','d08','d06'];
+  const depoHTML = (hidden) => depos.map(d =>
+    `<div class="depo"${hidden ? ' aria-hidden="true"' : ''}><img decoding="async" src="depoimentos/${d}.webp" alt="${hidden ? '' : 'Print de resultado de aluno'}" loading="lazy" width="640" height="1220"></div>`).join('');
+  $('#depoTrack').innerHTML = depoHTML(false) + depoHTML(true);
+
+  /* reveal on scroll */
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }), { threshold: .12, rootMargin: '0px 0px -40px 0px' });
+  $$('[data-reveal],.notch').forEach(el => io.observe(el));
+
+  /* nav: shrink on scroll, liquid lens, scrollspy */
+  const nav = $('#nav'), lens = $('#lens'), links = $$('#links a');
+  const moveLens = (a) => {
+    if (!a) { lens.style.opacity = 0; return; }
+    lens.style.left = a.parentElement.offsetLeft + 'px';
+    lens.style.width = a.offsetWidth + 'px';
+    lens.style.opacity = 1;
+  };
+  let active = null;
+  links.forEach(a => {
+    a.addEventListener('mouseenter', () => moveLens(a));
+    a.addEventListener('mouseleave', () => moveLens(active));
+  });
+  const sections = links.map(a => $(a.getAttribute('href')));
+
+  let ticking = false;
+  const onScroll = () => {
+    ticking = false;
+    const y = scrollY, vh = innerHeight;
+    nav.classList.toggle('is-scrolled', y > 40);
+
+    let cur = null;
+    sections.forEach((s, i) => { if (s && s.getBoundingClientRect().top < vh * .4) cur = links[i]; });
+    if (cur !== active) {
+      links.forEach(l => l.classList.toggle('is-active', l === cur));
+      active = cur; if (!nav.matches(':hover')) moveLens(active);
+    }
+
+  };
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+  addEventListener('resize', onScroll);
+  onScroll();
+
+  /* mobile menu */
+  const wrap = $('#navWrap'), burger = $('#burger');
+  const setMenu = (open) => {
+    wrap.classList.toggle('nav-open', open);
+    burger.setAttribute('aria-expanded', open);
+    burger.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+  };
+  burger.addEventListener('click', () => setMenu(!wrap.classList.contains('nav-open')));
+  $$('#sheet a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+  addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+
+  /* cursor spotlight on glass cards */
+  $$('.spot').forEach(el => el.addEventListener('pointermove', e => {
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+    el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  }));
+
+  /* size the VSL so the whole card fits in the first screen */
+  const stage = $('.hero__stage');
+  const fitVsl = () => {
+    if (innerWidth <= 900) { stage.style.removeProperty('--vslw'); return; }
+    const top = stage.getBoundingClientRect().top + scrollY;
+    const h = innerHeight - top - 28 - 20;            // bottom breathing room + frame padding
+    const w = Math.max(520, Math.min(1040, h * 16 / 9 + 20));
+    stage.style.setProperty('--vslw', w + 'px');
+  };
+  fitVsl(); addEventListener('resize', fitVsl);
+  document.fonts && document.fonts.ready.then(fitVsl);
+
+  /* VSL player */
+  const vsl = $('#vsl'), video = $('video', vsl);
+  $('.player__play', vsl).addEventListener('click', () => {
+    vsl.classList.add('is-playing'); video.controls = true; video.play().catch(() => {});
+  });
+
+  /* YouTube lite embed */
+  const yt = $('#yt');
+  $('.player__play', yt).addEventListener('click', () => {
+    // YouTube refuses to play embeds without an origin (page opened as a local file): open it on YouTube instead
+    if (location.protocol === 'file:') { window.open('https://www.youtube.com/watch?v=jPhQmzHAmQo', '_blank', 'noopener'); return; }
+    yt.innerHTML = '<iframe src="https://www.youtube.com/embed/jPhQmzHAmQo?autoplay=1&rel=0&playsinline=1&origin=' + encodeURIComponent(location.origin) + '" title="Da dor ao primeiro milhão | Player Revelação UTMify" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>';
+  });
+
+  /* bonus video carousel: plays the current slide while visible, advances when it ends */
+  $$('[data-carousel]').forEach(car => {
+    const track = $('.wins__track', car), slides = $$('.win', car);
+    const vids = slides.map(sl => $('video', sl));
+    let cur = 0, visible = false;
+    const sync = () => {
+      car.classList.toggle('on-first', cur === 0);
+      car.classList.toggle('on-last', cur === slides.length - 1);
+      vids.forEach((v, i) => {
+        if (i === cur && visible) { v.preload = 'auto'; v.play().catch(() => {}); }
+        else v.pause();
+      });
+    };
+    const go = (i) => {
+      cur = (i + slides.length) % slides.length;
+      vids[cur].currentTime = 0;
+      track.scrollTo({ left: slides[cur].offsetLeft - slides[0].offsetLeft, behavior: 'smooth' });
+      sync();
+    };
+    vids.forEach((v, i) => v.addEventListener('ended', () => { if (i === cur) go(cur + 1); }));
+    $('.wins__hint--next', car).addEventListener('click', () => go(cur + 1));
+    $('.wins__hint--prev', car).addEventListener('click', () => go(cur - 1));
+
+    // drag with the mouse to switch videos (touch already swipes natively)
+    let dx = null, start = 0;
+    track.addEventListener('pointerdown', e => {
+      if (e.pointerType !== 'mouse') return;
+      dx = e.clientX; start = track.scrollLeft; track.classList.add('is-drag');
+      try { track.setPointerCapture(e.pointerId); } catch {}
+    });
+    track.addEventListener('pointermove', e => { if (dx !== null) track.scrollLeft = start - (e.clientX - dx); });
+    const drop = e => {
+      if (dx === null) return;
+      const moved = e.clientX - dx; dx = null; track.classList.remove('is-drag');
+      go(Math.abs(moved) > 40 ? cur + (moved < 0 ? 1 : -1) : cur);
+    };
+    track.addEventListener('pointerup', drop); track.addEventListener('pointercancel', drop);
+    track.addEventListener('dragstart', e => e.preventDefault());
+
+    let st;
+    track.addEventListener('scroll', () => {           // manual swipe on touch screens
+      clearTimeout(st);
+      st = setTimeout(() => {
+        const i = Math.round(track.scrollLeft / track.clientWidth);
+        if (i !== cur) { cur = i; vids[cur].currentTime = 0; sync(); }
+      }, 120);
+    }, { passive: true });
+    new IntersectionObserver(es => { visible = es[0].isIntersecting; sync(); }, { threshold: .3 }).observe(car);
+  });
+
+  /* autoplay muted showcase videos only while visible */
+  const vio = new IntersectionObserver(es => es.forEach(e => {
+    const v = e.target;
+    if (e.isIntersecting) { v.preload = 'auto'; v.play().catch(() => {}); } else v.pause();
+  }), { threshold: .3 });
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) $$('video[data-autoplay]').forEach(v => vio.observe(v));
+})();

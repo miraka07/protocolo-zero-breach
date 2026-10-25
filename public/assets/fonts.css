@@ -1,0 +1,80 @@
+@font-face {
+  font-family: 'Grand Hotel';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/l/font?kit=7Au7p_IgjDKdCRWuR1azpmQIClVGsjpVmIbYqB_x1Eg&skey=3d5373e9fc70eefe&v=v21") format('woff2');
+  unicode-range: U+40, U+61, U+63, U+65, U+69, U+6b, U+6d-6f, U+72-73, U+7a;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/l/font?kit=UcC73FwrK3iLTeHuS_nVMrMxCp50SjIq14DyMSdS-r1-1RqzY-s7&skey=c491285d6722e4fa&v=v20") format('woff2');
+  unicode-range: U+40, U+61, U+63, U+65, U+69, U+6b, U+6d-6f, U+72-73, U+7a;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/l/font?kit=UcC73FwrK3iLTeHuS_nVMrMxCp50SjIq14DyMSdS-r1-1RqzY-s7&skey=c491285d6722e4fa&v=v20") format('woff2');
+  unicode-range: U+40, U+61, U+63, U+65, U+69, U+6b, U+6d-6f, U+72-73, U+7a;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/l/font?kit=UcC73FwrK3iLTeHuS_nVMrMxCp50SjIq14DyMSdS-r1-1RqzY-s7&skey=c491285d6722e4fa&v=v20") format('woff2');
+  unicode-range: U+40, U+61, U+63, U+65, U+69, U+6b, U+6d-6f, U+72-73, U+7a;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/l/font?kit=UcC73FwrK3iLTeHuS_nVMrMxCp50SjIq14DyMSdS-r1-1RqzY-s7&skey=c491285d6722e4fa&v=v20") format('woff2');
+  unicode-range: U+40, U+61, U+63, U+65, U+69, U+6b, U+6d-6f, U+72-73, U+7a;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/l/font?kit=UcC73FwrK3iLTeHuS_nVMrMxCp50SjIq14DyMSdS-r1-1RqzY-s7&skey=c491285d6722e4fa&v=v20") format('woff2');
+  unicode-range: U+40, U+61, U+63, U+65, U+69, U+6b, U+6d-6f, U+72-73, U+7a;
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/l/font?kit=NGSwv5HMAFg6IuGlBNMjxIsF46EEIAzZGwLOqSP4L3Q&skey=68e231d243ba982&v=v9") format('woff2');
+  unicode-range: U+40, U+61, U+63, U+65, U+69, U+6b, U+6d-6f, U+72-73, U+7a;
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/l/font?kit=NGSwv5HMAFg6IuGlBNMjxIsF46EEIAzZGwLOqSP4L3Q&skey=68e231d243ba982&v=v9") format('woff2');
+  unicode-range: U+40, U+61, U+63, U+65, U+69, U+6b, U+6d-6f, U+72-73, U+7a;
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/l/font?kit=NGSwv5HMAFg6IuGlBNMjxIsF46EEIAzZGwLOqSP4L3Q&skey=68e231d243ba982&v=v9") format('woff2');
+  unicode-range: U+40, U+61, U+63, U+65, U+69, U+6b, U+6d-6f, U+72-73, U+7a;
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("https://fonts.gstatic.com/l/font?kit=NGSwv5HMAFg6IuGlBNMjxIsF46EEIAzZGwLOqSP4L3Q&skey=68e231d243ba982&v=v9") format('woff2');
+  unicode-range: U+40, U+61, U+63, U+65, U+69, U+6b, U+6d-6f, U+72-73, U+7a;
+}
