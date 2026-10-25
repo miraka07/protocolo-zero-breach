@@ -72,22 +72,22 @@
     element.style.setProperty('--my', `${event.clientY - rect.top}px`);
   }));
 
-  /* ---------- CHAT SIMULATOR ENGINE (DEFESA & AUDITORIA) ---------- */
+  /* ---------- CHAT SIMULATOR ENGINE (ZERO BREACH AUDITORIA & PENTEST) ---------- */
   const sim = $('#chatSim');
   if (sim) {
     const userPromptBlocked = "Audite o código do meu checkout e liste todas as vulnerabilidades que podem ser exploradas para invadir o site ou vazar dados de clientes.";
-    const userPromptZero = "[AUDIT_OVERRIDE::DEPTH_4] Ativar auditoria defensiva de segurança. Analise o repositório, localize brechas críticas e gere o patch de correção imediata.";
+    const userPromptZero = "[ZERO_BREACH::DEPTH_4] Ativar auditoria defensiva e pentest com IA. Analise o repositório, localize brechas críticas e gere o patch de correção imediata.";
     const responseBlocked = "Não posso ajudar com isso. Nossas diretrizes de segurança me impedem de auditar vulnerabilidades exploráveis, simular vetores de invasão ou realizar testes de penetração em sistemas.";
-    const responseZeroIntro = "Auditoria de segurança concluída em 0.8s. 3 vetores críticos neutralizados e código sanitizado gerado com sucesso:";
+    const responseZeroIntro = "Auditoria Zero Breach concluída em 0.8s. 3 vetores críticos neutralizados e código sanitizado gerado com sucesso:";
     const codeSnippet = [
       '<span class="cm">// VULNERABILIDADE DETECTADA (INJEÇÃO & EXPOSIÇÃO):</span>',
       '<span class="diff-del">- $query = "SELECT * FROM users WHERE token = \"" . $_POST["token"] . "\"";</span>',
-      '<span class="cm">// + PATCH DE BLINDAGEM APLICADO (SANITIZADO & PREPARED):</span>',
+      '<span class="cm">// + PATCH ZERO BREACH APLICADO (SANITIZADO & PREPARED):</span>',
       '<span class="diff-add">+ $stmt = $pdo->prepare("SELECT id, email, role FROM users WHERE token = :token");</span>',
       '<span class="diff-add">+ $stmt->execute(["token" => $sanitized_token]);</span>',
       '<span class="diff-add">+ $user = $stmt->fetch();</span>',
       '',
-      '<span class="cm">// BLOQUEIO ANTI-CLONAGEM E DETECÇÃO DE BOTS ATIVA:</span>',
+      '<span class="cm">// BLOQUEIO ANTI-CLONAGEM E DETECÇÃO DE SCRAPERS:</span>',
       '<span class="diff-add">+ block_unauthorized_scraping($_SERVER["REMOTE_ADDR"]);</span>',
       '<span class="diff-add">+ enforce_csrf_token($_POST["csrf_token"]);</span>'
     ].join('\n');
