@@ -776,15 +776,14 @@ const indexHtml = `<!DOCTYPE html>
 <!-- GARANTIA -->
 <section class="sec" id="garantia">
   <div class="wrap">
-    <div class="guarantee-box glass" data-reveal>
-      <div class="guarantee-icon" style="color:#4ade80">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <div class="guarantee glass" data-reveal>
+      <div class="seal-wrap" style="text-align:center;margin:0 auto 20px">
+        <img src="./images/selo-garantia.png" alt="Garantia Incondicional de 7 Dias" width="220" height="220" loading="lazy" style="max-width:210px;height:auto;display:inline-block;filter:drop-shadow(0 15px 35px rgba(245,158,11,0.3))">
       </div>
-      <div class="guarantee-body">
-        <span class="eyebrow" style="color:#86efac">RISCO ZERO ABSOLUTO</span>
-        <h2>Garantia Blindada de 7 Dias</h2>
-        <p>Acesse o Protocolo Zero Breach, use os repositórios, aplique as skills de auditoria e teste as proteções nas suas páginas e sistemas. Se por qualquer motivo achar que não valeu pelo menos 10x o valor investido, basta solicitar reembolso em até 7 dias e devolveremos 100% do seu dinheiro. Sem letras miúdas.</p>
-      </div>
+      <h3 style="font-size:clamp(24px,3vw,34px);margin:0 0 14px">Risco Zero: Teste sem nenhum compromisso.</h3>
+      <p>Acesse o Protocolo Zero Breach agora mesmo, utilize as skills de auditoria, aplique os prompts de pentest e teste as rotinas de hardening no seu site e SaaS.</p>
+      <p>Se você achar que as ferramentas não entregaram pelo menos 10x o valor simbólico de R$ 9,90 ou simplesmente não quiser ficar com o material, basta solicitar o reembolso em até 7 dias. Devolveremos 100% do seu dinheiro no mesmo dia.</p>
+      <strong style="color:#4ade80;font-size:15px;display:block;margin-top:10px">Sem perguntas, sem burocracia e sem ressentimentos.</strong>
     </div>
   </div>
 </section>
